@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Task;
+use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,5 +21,29 @@ class TaskController extends AbstractController
         return $this->render('task/list.html.twig', [
             'tasks' => $tasksList
         ]);
+    }
+
+    #[Route('/tasks/create', name: 'task_create')]
+    public function createAction(Request $request, EntityManagerInterface $em)
+    {
+        $task = new Task();
+        $form = $this->createForm(TaskType::class, $task);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $newTask = $form->getData();
+            $newTask->setCreatedAt(new DateTime());
+            $newTask->setIsDone(false);
+            
+            $em->persist($newTask);
+            $em->flush();
+
+            $this->addFlash('success', 'La tâche a été bien ajoutée.');
+
+            return $this->redirectToRoute('task_list');
+        }
+
+        return $this->render('task/create.html.twig', ['form' => $form->createView()]);
     }
 }
