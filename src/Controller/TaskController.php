@@ -34,7 +34,7 @@ class TaskController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $newTask = $form->getData();
             $newTask->setCreatedAt(new DateTime());
-            $newTask->setIsDone(false);
+            $newTask->toggle(false);
 
             $em->persist($newTask);
             $em->flush();
@@ -60,6 +60,35 @@ class TaskController extends AbstractController
             return $this->redirectToRoute('task_list');
         }
 
-        return $this->render('task/edit.html.twig', ['form'=>$form->createView(), 'task'=>$task]);
+        return $this->render(
+            'task/edit.html.twig',
+            [
+                'form' => $form->createView(),
+                'task' => $task
+            ]
+        );
+    }
+
+    #[Route('/tasks/{id}/toggle', name: 'task_toggle')]
+    public function toggleTaskAction(Task $task, EntityManagerInterface $em): Response
+    {
+        $task->toggle(!$task->isDone());
+        $em->flush();
+
+        $this->addFlash('success', sprintf(
+            'La tâche %s a bien été marquée comme faite.',
+            $task->getTitle()
+        ));
+        return $this->redirectToRoute('task_list');
+    }
+
+    #[Route('/tasks/{id}/delete', name: 'task_delete')]
+    public function deleteAction(Task $task, EntityManagerInterface $em): Response
+    {
+        $em->remove($task);
+        $em->flush();
+
+        $this->addFlash('success', 'La tâche a bien été supprimée.');
+        return $this->redirectToRoute('task_list');
     }
 }
