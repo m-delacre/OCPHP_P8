@@ -24,7 +24,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('/tasks/create', name: 'task_create')]
-    public function createAction(Request $request, EntityManagerInterface $em)
+    public function createAction(Request $request, EntityManagerInterface $em): Response
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
@@ -35,7 +35,7 @@ class TaskController extends AbstractController
             $newTask = $form->getData();
             $newTask->setCreatedAt(new DateTime());
             $newTask->setIsDone(false);
-            
+
             $em->persist($newTask);
             $em->flush();
 
@@ -45,5 +45,21 @@ class TaskController extends AbstractController
         }
 
         return $this->render('task/create.html.twig', ['form' => $form->createView()]);
+    }
+
+    #[Route('/tasks/{id}/edit', name: 'task_edit')]
+    public function editAction(Task $task, Request $request, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(TaskType::class, $task);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'La tâche à bien été modifiée.');
+            return $this->redirectToRoute('task_list');
+        }
+
+        return $this->render('task/edit.html.twig', ['form'=>$form->createView(), 'task'=>$task]);
     }
 }
