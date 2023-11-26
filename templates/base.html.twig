@@ -36,21 +36,26 @@
 
                     <img src="{{ asset('img/Logo_OpenClassrooms.png') }}" alt="OpenClassrooms" />
                 </div>
+                {% if app.user %}
+                <p>{{app.user.username}}</p>
+                {% else %}
+                <a href="{{ path('app_login') }}" class="btn btn-success">Se connecter</a>
+                {% endif %}
             </div>
         </nav>
 
         <!-- Page Content -->
         <div class="container">
             <div class="row">
-                {# <a href="{{ path('user_create') }}" class="btn btn-primary">Créer un utilisateur</a>
+                <a href="{{ path('user_register') }}" class="btn btn-primary">Créer un utilisateur</a>
 
                 {% if app.user %}
-                <a href="{{ path('logout') }}" class="pull-right btn btn-danger">Se déconnecter</a>
+                <a href="{{ path('app_logout') }}" class="pull-right btn btn-danger">Se déconnecter</a>
                 {% endif %}
 
                 {% if not app.user and 'login' != app.request.attributes.get('_route') %}
-                <a href="{{ path('login') }}" class="btn btn-success">Se connecter</a>
-                {% endif %} #}
+                <a href="{{ path('app_login') }}" class="btn btn-success">Se connecter</a>
+                {% endif %}
             </div>
 
             <div class="row">
