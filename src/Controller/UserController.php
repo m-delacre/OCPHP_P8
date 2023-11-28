@@ -22,24 +22,25 @@ class UserController extends AbstractController
     }
 
     #[Route('/users/{id}/edit', name: 'user_edit')]
-    public function userEdit(User $user, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
+    public function userEdit(User $user, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $form = $this->createForm(ModifUserFormType::class, $user);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
-            $plainPassword = $user->getPassword();
-            dd($plainPassword);
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $plainPassword
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('password')->getData()
+                )
             );
-            $user->setPassword($hashedPassword);
-            $em->persist($user);
+
             $em->flush();
+
+            return $this->redirectToRoute('user_list');
         }
+
         return $this->render('user/edit.html.twig', ['form' => $form->createView(), 'user' => $user]);
     }
 }

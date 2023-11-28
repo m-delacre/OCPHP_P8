@@ -37,9 +37,16 @@
                     <img src="{{ asset('img/Logo_OpenClassrooms.png') }}" alt="OpenClassrooms" />
                 </div>
                 {% if app.user %}
-                <p>{{app.user.username}}</p>
+                    <div>
+                        <p class="btn btn-secondary mt-3">{{app.user.username}}</p>
+                        <a href="{{ path('user_list') }}" class="btn btn-primary">Utilisateurs</a>
+                        <a href="{{ path('app_logout') }}" class="btn btn-primary">Se déconnecter</a>
+                    </div>
                 {% else %}
-                <a href="{{ path('app_login') }}" class="btn btn-success">Se connecter</a>
+                    <div>
+                        <a href="{{ path('app_login') }}" class="btn btn-success">Se connecter</a>
+                        <a href="{{ path('user_register') }}" class="btn btn-success">Inscription</a>
+                    </div>
                 {% endif %}
             </div>
         </nav>
