@@ -74,10 +74,17 @@ class Task
     {
         return $this->isDone;
     }
-
-    public function toggle(bool $isDone): static
+    
+    public function setIsDone(bool $isDone): static
     {
         $this->isDone = $isDone;
+
+        return $this;
+    }
+
+    public function toggle(): static
+    {
+        $this->isDone = !$this->isDone();
 
         return $this;
     }
