@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class TaskController extends AbstractController
 {
     #[Route('/tasks', name: 'task_list')]
-    public function listAction(TaskRepository $taskRepository): Response
+    public function listTask(TaskRepository $taskRepository): Response
     {
         $tasksList = $taskRepository->findAll();
         return $this->render('task/list.html.twig', [
@@ -23,8 +23,17 @@ class TaskController extends AbstractController
         ]);
     }
 
+    #[Route('/tasksNotDone', name: 'task_list_notDone')]
+    public function listTaskNotDone(TaskRepository $taskRepository): Response
+    {
+        $tasksList = $taskRepository->findBy(['isDone'=>false]);
+        return $this->render('task/list.html.twig', [
+            'tasks' => $tasksList
+        ]);
+    }
+
     #[Route('/tasks/create', name: 'task_create')]
-    public function createAction(Request $request, EntityManagerInterface $em): Response
+    public function createTask(Request $request, EntityManagerInterface $em): Response
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
@@ -48,7 +57,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('/tasks/{id}/edit', name: 'task_edit')]
-    public function editAction(Task $task, Request $request, EntityManagerInterface $em): Response
+    public function editTask(Task $task, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(TaskType::class, $task);
 
@@ -70,7 +79,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('/tasks/{id}/toggle', name: 'task_toggle')]
-    public function toggleTaskAction(Task $task, EntityManagerInterface $em): Response
+    public function toggleTask(Task $task, EntityManagerInterface $em): Response
     {
         $task->toggle();
         $em->flush();
@@ -83,7 +92,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('/tasks/{id}/delete', name: 'task_delete')]
-    public function deleteAction(Task $task, EntityManagerInterface $em): Response
+    public function deleteTask(Task $task, EntityManagerInterface $em): Response
     {
         $em->remove($task);
         $em->flush();
