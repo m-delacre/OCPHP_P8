@@ -17,16 +17,16 @@ class TaskController extends AbstractController
     #[Route('/tasks', name: 'task_list')]
     public function listTask(TaskRepository $taskRepository): Response
     {
-        $tasksList = $taskRepository->findAll();
+        $tasksList = $taskRepository->findBy(['isDone' => false]);
         return $this->render('task/list.html.twig', [
             'tasks' => $tasksList
         ]);
     }
 
-    #[Route('/tasksNotDone', name: 'task_list_notDone')]
+    #[Route('/tasksDone', name: 'task_list_done')]
     public function listTaskNotDone(TaskRepository $taskRepository): Response
     {
-        $tasksList = $taskRepository->findBy(['isDone'=>false]);
+        $tasksList = $taskRepository->findBy(['isDone' => true]);
         return $this->render('task/list.html.twig', [
             'tasks' => $tasksList
         ]);
@@ -97,10 +97,25 @@ class TaskController extends AbstractController
     #[Route('/tasks/{id}/delete', name: 'task_delete')]
     public function deleteTask(Task $task, EntityManagerInterface $em): Response
     {
-        $em->remove($task);
-        $em->flush();
+        $user = $this->getUser();
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
+        if ($task->getUser() === $user) {
+            $em->remove($task);
+            $em->flush();
+
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+            return $this->redirectToRoute('task_list');
+        }
+
+        if ( $task->getUser()->getUsername() === "anonyme" && in_array('ROLE_ADMIN', $user->getRoles())) {
+            $em->remove($task);
+            $em->flush();
+
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+            return $this->redirectToRoute('task_list');
+        }
+
+        $this->addFlash('error', "vous n'êtes pas authorisé à supprimer cette tâche.");
         return $this->redirectToRoute('task_list');
     }
 }

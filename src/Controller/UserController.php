@@ -11,10 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserController extends AbstractController
 {
     #[Route('/users', name: 'user_list')]
+    #[IsGranted('ROLE_ADMIN', message:"vous n'êtes pas authorisé à accéder à cette page.")]
     public function usersList(UserRepository $userRepository): Response
     {
         $usersList = $userRepository->findAll();
@@ -27,7 +29,6 @@ class UserController extends AbstractController
         $form = $this->createForm(ModifUserFormType::class, $user);
 
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setPassword(
                 $userPasswordHasher->hashPassword(

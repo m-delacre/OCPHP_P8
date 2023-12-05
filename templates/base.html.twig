@@ -39,7 +39,9 @@
                 {% if app.user %}
                     <div>
                         <p class="btn btn-secondary mt-3">{{app.user.username}}</p>
-                        <a href="{{ path('user_list') }}" class="btn btn-primary">Utilisateurs</a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('user_list') }}" class="btn btn-primary">Utilisateurs</a>
+                        {% endif %}
                         <a href="{{ path('app_logout') }}" class="btn btn-primary">Se déconnecter</a>
                     </div>
                 {% else %}
