@@ -6,7 +6,7 @@
     <a href="{{ path('task_create') }}" class="btn btn-info pull-right">Créer une tâche</a>
     <div class="row">
         {% for task in tasks %}
-            <div class="col-sm-4 col-lg-4 col-md-4">
+            {# <div class="col-sm-4 col-lg-4 col-md-4">
                 <div class="thumbnail">
                     <div class="caption">
                         <h4 class="pull-right">
@@ -26,10 +26,13 @@
                         </form>
                     </div>
                 </div>
-            </div>
-            {# <div class="card m-2" style="width: 18rem;">
+            </div> #}
+            <div class="card m-2" style="width: 18rem;">
                 <div class="card-body">
                     <h5 class="card-title"><a href="{{ path('task_edit', {'id' : task.id }) }}">{{ task.title }}</a></h5>
+                    {% if task.user %}
+                        <p>{{ task.user.username}}</p>
+                    {% endif %}
                     <p class="card-text">{{ task.content }}</p>
                     <div>
                         <form action="{{ path('task_toggle', {'id' : task.id }) }}" class="mt-2">
@@ -42,7 +45,7 @@
                         </form>
                     </div>
                 </div>
-            </div> #}
+            </div>
         {% else %}
             <div class="alert alert-warning" role="alert">
                 Il n'y a pas encore de tâche enregistrée. <a href="{{ path('task_create') }}" class="btn btn-warning pull-right">Créer une tâche</a>
