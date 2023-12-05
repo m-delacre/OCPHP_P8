@@ -34,7 +34,16 @@ class ModifUserFormType extends AbstractType
                         'max' => 4096,
                     ]),
                 ],
-            ]);
+            ])
+            ->add(
+                'roles',
+                ChoiceType::class,
+                [
+                    'choices' => ['ROLE_ADMIN' => 'ROLE_ADMIN', 'ROLE_USER' => 'ROLE_USER'],
+                    'expanded' => true,
+                    'multiple' => true,
+                ]
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver): void
