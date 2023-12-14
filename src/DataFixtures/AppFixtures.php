@@ -49,13 +49,13 @@ class AppFixtures extends Fixture
         }
 
         // create 1 anonyme user
-        $anonUser = new User();
-        $anonUser->setEmail($faker->email());
-        $anonUser->setUsername('anonyme');
-        $anonUser->setPassword($this->userPasswordHasher->hashPassword($anonUser, "password"));
-        $anonUser->setRoles(['ROLE_USER']);
+        // $anonUser = new User();
+        // $anonUser->setEmail($faker->email());
+        // $anonUser->setUsername('anonyme');
+        // $anonUser->setPassword($this->userPasswordHasher->hashPassword($anonUser, "password"));
+        // $anonUser->setRoles(['ROLE_USER']);
 
-        $manager->persist($anonUser);
+        // $manager->persist($anonUser);
 
         // create tasks without user
         for ($i = 0; $i < 6; $i++) {

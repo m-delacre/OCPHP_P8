@@ -34,7 +34,7 @@
                         <p>{{ task.user.username}}</p>
                     {% endif %}
                     <p class="card-text">{{ task.content }}</p>
-                    <div>
+                    <div class="card-btns">
                         <form action="{{ path('task_toggle', {'id' : task.id }) }}" class="mt-2">
                             {% if not task.isDone %}
                                 <button class="btn btn-success btn-sm pull-right">
@@ -46,9 +46,11 @@
                                 </button>
                             {% endif %}
                         </form>
-                        <form action="{{ path('task_delete', {'id' : task.id }) }}" class="mt-2">
-                            <button class="btn btn-danger btn-sm pull-right">Supprimer</button>
-                        </form>
+                        {% if task.user == app.user%}
+                            <form action="{{ path('task_delete', {'id' : task.id }) }}" class="mt-2">
+                                <button class="btn btn-danger btn-sm pull-right">🗑️</button>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>

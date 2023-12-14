@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserController extends AbstractController
 {
     #[Route('/users', name: 'user_list')]
-    #[IsGranted('ROLE_ADMIN', message:"vous n'êtes pas authorisé à accéder à cette page.")]
+    #[IsGranted('ROLE_ADMIN', message: "vous n'êtes pas authorisé à accéder à cette page.")]
     public function usersList(UserRepository $userRepository): Response
     {
         $usersList = $userRepository->findAll();
@@ -26,16 +26,36 @@ class UserController extends AbstractController
     #[Route('/users/{id}/edit', name: 'user_edit')]
     public function userEdit(User $user, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher): Response
     {
-        $form = $this->createForm(ModifUserFormType::class, $user);
+        $userRoles = $user->getRoles();
+        $isAdmin = false;
+
+        if (in_array('ROLE_ADMIN', $userRoles)) {
+            $isAdmin = true;
+        }
+
+        $form = $this->createForm(ModifUserFormType::class, $user, ['is_admin' => $isAdmin]);
+
+        $userPassword = $user->getPassword();
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('password')->getData()
-                )
-            );
+            if ($form->get('isAdmin')->getData()) {
+                $user->setRolesAdminUser();
+            } else {
+                $user->setRolesSimpleUser();
+            }
+
+            if (empty($form->get('password')->getData())) {
+                $user->setPassword($userPassword);
+            } else {
+                $user->setPassword(
+                    $userPasswordHasher->hashPassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+            }
 
             $em->flush();
 

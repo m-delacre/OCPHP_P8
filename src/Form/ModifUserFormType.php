@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -23,10 +24,8 @@ class ModifUserFormType extends AbstractType
                 // this is read and encoded in the controller
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
+                'required' => false,
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
                     new Length([
                         'min' => 6,
                         'minMessage' => 'Your password should be at least {{ limit }} characters',
@@ -35,21 +34,30 @@ class ModifUserFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add(
-                'roles',
-                ChoiceType::class,
-                [
-                    'choices' => ['ROLE_ADMIN' => 'ROLE_ADMIN', 'ROLE_USER' => 'ROLE_USER'],
-                    'expanded' => true,
-                    'multiple' => true,
-                ]
-            );
+            ->add('isAdmin', CheckboxType::class, [
+                'label'=>'is admin ?',
+                'required'=>false,
+                'mapped' => false,
+                'data' => $options['is_admin']
+            ])
+        ;
     }
 
+    // public function configureOptions(OptionsResolver $resolver): void
+    // {
+    //     $resolver->setDefaults([
+    //         'data_class' => User::class,
+    //     ]);
+    // }
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
+            // ...,
+            'is_admin' => false,
         ]);
+
+        // you can also define the allowed types, allowed values and
+        // any other feature supported by the OptionsResolver component
+        $resolver->setAllowedTypes('is_admin', 'bool');
     }
 }
