@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
     name: 'app:assign-anonyme',
@@ -25,12 +26,14 @@ class AssignAnonymeCommand extends Command
     private $entityManager = EntityManagerInterface::class;
     private $taskRepository = Task::class;
     private $userRepository = User::class;
+    private $userPasswordHasher = UserPasswordHasherInterface::class;
 
-    public function __construct(EntityManagerInterface $entityManager, TaskRepository $taskRepository, UserRepository $userRepository)
+    public function __construct(EntityManagerInterface $entityManager, TaskRepository $taskRepository, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher)
     {
         $this->entityManager = $entityManager;
         $this->taskRepository = $taskRepository;
         $this->userRepository = $userRepository;
+        $this->userPasswordHasher = $userPasswordHasher;
 
         parent::__construct();
     }
@@ -61,7 +64,21 @@ class AssignAnonymeCommand extends Command
 
         $io->success("L'utilisateur Anonyme a été attribué aux tâches sans utilisateur.");
 
+        // TODO: créer l'utilisateur anonyme si il existe pas
         $userAnonyme = $this->userRepository->findOneBy(['username' => "anonyme"]);
+        if ($userAnonyme === null) {
+            $newAnonyme = new User();
+            $newAnonyme->setEmail('ano@nyme.com');
+            $newAnonyme->setPassword($this->userPasswordHasher->hashPassword($newAnonyme, "password"));
+            $newAnonyme->setRolesSimpleUser();
+            $newAnonyme->setUsername('anonyme');
+
+            $this->entityManager->persist($newAnonyme);
+            $this->entityManager->flush();
+
+            $userAnonyme = $newAnonyme;
+        }
+
         $taskList = $this->taskRepository->findBy(['user' => null]);
 
         foreach ($taskList as $task) {

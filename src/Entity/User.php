@@ -88,6 +88,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function setRolesSimpleUser(): static
+    {
+        $this->roles = ["ROLE_USER"];
+
+        return $this;
+    }
+
+    public function setRolesAdminUser(): static
+    {
+        $this->roles = ["ROLE_USER","ROLE_ADMIN"];
+
+        return $this;
+    }
+
     /**
      * @see PasswordAuthenticatedUserInterface
      */
