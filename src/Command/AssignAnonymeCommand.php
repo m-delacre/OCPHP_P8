@@ -22,7 +22,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 )]
 class AssignAnonymeCommand extends Command
 {
-
     private $entityManager = EntityManagerInterface::class;
     private $taskRepository = Task::class;
     private $userRepository = User::class;
