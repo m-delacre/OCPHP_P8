@@ -1,19 +1,13 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\Entity;
 
 use App\Entity\Task;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 
-class TaskClassTest extends TestCase
+class TaskTest extends TestCase
 {
-
-    // public function testSomething(): void
-    // {
-    //     $this->assertTrue(true);
-    // }
-
     public function testTaskClass(): void
     {
         $task = new Task();
@@ -26,6 +20,8 @@ class TaskClassTest extends TestCase
         $this->assertEquals('le content de ma task', $task->getContent());
         $this->assertEquals('Add a task', $task->getTitle());
         $this->assertNull($task->getUser());
+        $this->assertNull($task->getId());
+
         $this->assertIsBool($task->isDone());
         $this->assertIsString($task->getContent());
         $this->assertIsString($task->getTitle());
