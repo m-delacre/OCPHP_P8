@@ -9,7 +9,7 @@
             <div class="card m-2" style="width: 18rem;">
                 <div class="card-body">
                     <h5 class="card-title">
-                        {% if task.user == app.user %}
+                        {% if task.user == app.user or is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('task_edit', {'id' : task.id }) }}">{{ task.title }}</a>
                         {% else %}
                             <p>{{ task.title }}</p>
