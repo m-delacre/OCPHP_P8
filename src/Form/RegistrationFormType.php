@@ -19,14 +19,6 @@ class RegistrationFormType extends AbstractType
         $builder
             ->add('username')
             ->add('email')
-            ->add('agreeTerms', CheckboxType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'You should agree to our terms.',
-                    ]),
-                ],
-            ])
             ->add('plainPassword', PasswordType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
@@ -44,6 +36,12 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
+            ->add('isAdmin', CheckboxType::class, [
+                'label'=>"L'utilisateur est admin ?",
+                'required'=>false,
+                'mapped' => false,
+                'data' => $options['is_admin']
+            ])
         ;
     }
 
@@ -51,6 +49,9 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'is_admin' => false,
         ]);
+
+        $resolver->setAllowedTypes('is_admin', 'bool');
     }
 }

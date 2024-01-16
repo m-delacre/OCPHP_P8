@@ -29,9 +29,9 @@ class RegistrationControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/register');
 
         // select the button
-        $buttonCrawlerNode = $crawler->selectButton('Register');
+        $buttonCrawlerNode = $crawler->selectButton('Ajouter');
 
-        $this->assertSelectorTextContains('.uppercase', 'Register');
+        $this->assertSelectorTextContains('.uppercase', 'Ajouter');
         $this->assertCount(1, $crawler->filter('form'));
 
         // retrieve the Form object for the form belonging to this button
@@ -41,7 +41,7 @@ class RegistrationControllerTest extends WebTestCase
         $form['registration_form[username]'] = 'test';
         $form['registration_form[email]'] = 'test@mail.com';
         $form['registration_form[plainPassword]'] = 'password';
-        $form['registration_form[agreeTerms]'] = true;
+        $form['registration_form[isAdmin]'] = true;
 
         // submit the Form object
         $this->client->submit($form);

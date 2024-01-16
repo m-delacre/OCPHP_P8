@@ -20,7 +20,7 @@ class SecurityControllerTest extends WebTestCase
     {
         $this->client->request('GET', '/');
 
-        $testUser = $this->userRepository->findOneBy(['username' => 'user0']);
+        $testUser = $this->userRepository->findOneByUsername('user0');
 
         $this->client->loginUser($testUser);
 
