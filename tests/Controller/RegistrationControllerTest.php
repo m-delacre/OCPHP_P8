@@ -24,7 +24,7 @@ class RegistrationControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/users');
 
-        $this->assertCount(10, $crawler->filter('tr'));
+        $this->assertCount(11, $crawler->filter('tr'));
 
         $crawler = $this->client->request('GET', '/register');
 
@@ -53,6 +53,6 @@ class RegistrationControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/users');
 
-        $this->assertCount(11, $crawler->filter('tr'));
+        $this->assertCount(12, $crawler->filter('tr'));
     }
 }

@@ -69,7 +69,7 @@ class UserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/users');
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertCount(10, $crawler->filter('tr'));
+        $this->assertCount(11, $crawler->filter('tr'));
     }
 
     public function testChangeUserPassword(): void
