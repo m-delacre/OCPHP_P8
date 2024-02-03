@@ -30,36 +30,11 @@ class AssignAnonymeCommandTest extends KernelTestCase
         self::bootKernel();
         $application = new Application(self::$kernel);
 
-        /*
-        =======================================================================
-        //recuperer anon
         $anonymeUser = $this->userRepository->findOneByUsername('anonyme');
-        //attribuer user null aux taches d'anonyme
-        $anonTasks = $this->taskRepository->findByUser($anonymeUser);
-        foreach($anonTasks as $task) {
-            $task->setUser(null);
-            $this->entityManager->persist($task);
-        }
-        $this->entityManager->flush();
-        $tasksListWithNull = $this->taskRepository->findBy(['user'=>null]);
-        $this->assertNotEmpty($tasksListWithNull);
-        dump($tasksListWithNull);
-        $anonTasks = $this->taskRepository->findBy(['user'=>$anonymeUser]);
-        dump($anonTasks);
-        // //effacer le user
-        // $this->entityManager->remove($anonymeUser);
-        // $this->entityManager->flush();
-        // $deletedAnonyme = $this->userRepository->findByUsername('anonyme');
-        // $this->assertNull($deletedAnonyme);
-        ======================================================================= 
-        */
-        //get anon
-        $anonymeUser = $this->userRepository->findOneByUsername('anonyme');
-        //get anon tasks
+
         $anonTasks = $this->taskRepository->findByUser($anonymeUser);
 
-        //delete anon tasks
-        foreach($anonTasks as $task) {
+        foreach ($anonTasks as $task) {
             $task = $this->entityManager->getReference(Task::class, $task->getId());
             $this->entityManager->remove($task);
         }
@@ -67,14 +42,12 @@ class AssignAnonymeCommandTest extends KernelTestCase
         $emptyAnonTasksList = $this->taskRepository->findByUser($anonymeUser);
         $this->assertEmpty($emptyAnonTasksList);
 
-        //delete anon user
         $userToDelete = $this->entityManager->getReference(User::class, $anonymeUser->getId());
         $this->entityManager->remove($userToDelete);
         $this->entityManager->flush();
         $deletedAnonymeUser = $this->userRepository->findByUsername('anonyme');
         $this->assertEmpty($deletedAnonymeUser);
 
-        //create task without user
         $newTask = new Task();
         $newTask->setContent('im a new task content');
         $newTask->setCreatedAt(new DateTime());

@@ -230,7 +230,7 @@ class TaskControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(302);
         $this->assertResponseRedirects();
-        
+
         $crawler = $this->client->followRedirect();
 
         $this->assertCount(17, $crawler->filter('.card'));
@@ -256,7 +256,7 @@ class TaskControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(302);
         $this->assertResponseRedirects();
-        
+
         $crawler = $this->client->followRedirect();
 
         $this->assertCount(17, $crawler->filter('.card'));
