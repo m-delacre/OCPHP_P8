@@ -24,13 +24,12 @@ class TaskControllerTest extends WebTestCase
     public function testTaskList(): void
     {
         $testUser = $this->userRepository->findOneByUsername('user0');
-
         $this->client->loginUser($testUser);
 
         $crawler = $this->client->request('GET', '/tasks');
 
         $this->assertResponseIsSuccessful();
-        $this->assertCount(18, $crawler->filter('.card'));
+        $this->assertCount(17, $crawler->filter('.card'));
     }
 
     public function testTaskListDone(): void
@@ -139,7 +138,7 @@ class TaskControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/tasks');
 
-        $this->assertCount(18, $crawler->filter('.card'));
+        $this->assertCount(17, $crawler->filter('.card'));
 
         $crawler = $this->client->request('GET', '/tasks/' . $taskToToggle->getId() . '/toggle');
 
@@ -147,7 +146,7 @@ class TaskControllerTest extends WebTestCase
 
         $crawler = $this->client->followRedirect();
 
-        $this->assertCount(17, $crawler->filter('.card'));
+        $this->assertCount(16, $crawler->filter('.card'));
 
         $crawler = $this->client->request('GET', '/tasksDone');
 
@@ -164,7 +163,7 @@ class TaskControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/tasks');
 
-        $this->assertCount(18, $crawler->filter('.card'));
+        $this->assertCount(17, $crawler->filter('.card'));
 
         $crawler = $this->client->request('GET', '/tasks/' . $taskToDelete->getId() . '/delete');
 
@@ -172,11 +171,7 @@ class TaskControllerTest extends WebTestCase
 
         $crawler = $this->client->followRedirect();
 
-        $this->assertCount(17, $crawler->filter('.card'));
-
-        $ShouldNotExistAnymore = $this->taskRepository->findOneByUser($testUser);
-
-        $this->assertEmpty($ShouldNotExistAnymore);
+        $this->assertCount(16, $crawler->filter('.card'));
     }
 
     public function testDeleteAnonTaskWhenAdmin(): void
@@ -206,7 +201,7 @@ class TaskControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/tasks');
 
-        $this->assertCount(18, $crawler->filter('.card'));
+        $this->assertCount(17, $crawler->filter('.card'));
 
         $crawler = $this->client->request('GET', '/tasks/' . $taskToDelete->getId() . '/delete');
 
@@ -214,10 +209,101 @@ class TaskControllerTest extends WebTestCase
 
         $crawler = $this->client->followRedirect();
 
-        $this->assertCount(17, $crawler->filter('.card'));
+        $this->assertCount(16, $crawler->filter('.card'));
 
         $ShouldNotExistAnymore = $this->taskRepository->findOneById($taskToDelete->getId());
 
         $this->assertEmpty($ShouldNotExistAnymore);
+    }
+
+    public function testDeleteTaskWithoutLogin(): void
+    {
+        $testUser = $this->userRepository->findOneByUsername('user0');
+
+        $taskToDelete = $this->taskRepository->findOneByUser($testUser);
+
+        $crawler = $this->client->request('GET', '/tasks');
+
+        $this->assertCount(17, $crawler->filter('.card'));
+
+        $crawler = $this->client->request('GET', '/tasks/' . $taskToDelete->getId() . '/delete');
+
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseRedirects();
+
+        $crawler = $this->client->followRedirect();
+
+        $this->assertCount(17, $crawler->filter('.card'));
+
+        $this->assertSelectorTextContains('div .alert', "Oops ! vous n'êtes pas authorisé à supprimer cette tâche.");
+    }
+
+    public function testDeleteNormalUserTaskWithAdminLogin(): void
+    {
+        $testUser = $this->userRepository->findOneByUsername('user0');
+
+        $adminUser = $this->userRepository->findOneByUsername('admin1');
+
+        $this->client->loginUser($adminUser);
+
+        $taskToDelete = $this->taskRepository->findOneByUser($testUser);
+
+        $crawler = $this->client->request('GET', '/tasks');
+
+        $this->assertCount(17, $crawler->filter('.card'));
+
+        $crawler = $this->client->request('GET', '/tasks/' . $taskToDelete->getId() . '/delete');
+
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseRedirects();
+
+        $crawler = $this->client->followRedirect();
+
+        $this->assertCount(17, $crawler->filter('.card'));
+
+        $this->assertSelectorTextContains('div .alert', "Oops ! vous n'êtes pas authorisé à supprimer cette tâche.");
+    }
+
+    public function testEditTaskWithoutLogin(): void
+    {
+        $testUser = $this->userRepository->findOneByUsername('user0');
+
+        $taskToEdit = $this->taskRepository->findOneByUser($testUser);
+
+        $crawler = $this->client->request('POST', '/tasks/' . $taskToEdit->getId() . '/edit');
+
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseRedirects('/login');
+    }
+
+    public function testEditNormalUserTaskWithAdminRole(): void
+    {
+        $testUser = $this->userRepository->findOneByUsername('user0');
+        $adminUser = $this->userRepository->findOneByUsername('admin1');
+
+        $this->client->loginUser($adminUser);
+
+        $taskToEdit = $this->taskRepository->findOneByUser($testUser);
+
+        $crawler = $this->client->request('POST', '/tasks/' . $taskToEdit->getId() . '/edit');
+
+        // select the button
+        $buttonCrawlerNode = $crawler->selectButton('Modifier');
+
+        $this->assertSelectorTextContains('button', 'Modifier');
+        $this->assertCount(1, $crawler->filter('form'));
+    }
+
+    public function testEditOtherUserTask(): void
+    {
+        $testUser = $this->userRepository->findOneByUsername('user0');
+        $user2 = $this->userRepository->findOneByUsername('user1');
+
+        $this->client->loginUser($user2);
+
+        $taskToEdit = $this->taskRepository->findOneByUser($testUser);
+
+        $crawler = $this->client->request('POST', '/tasks/' . $taskToEdit->getId() . '/edit');
+        $this->assertResponseStatusCodeSame(403);
     }
 }

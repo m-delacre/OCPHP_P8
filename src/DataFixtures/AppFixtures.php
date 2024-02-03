@@ -48,37 +48,43 @@ class AppFixtures extends Fixture
             $manager->persist($adminUser);
         }
 
-        // create 1 anonyme user
-        // $anonUser = new User();
-        // $anonUser->setEmail($faker->email());
-        // $anonUser->setUsername('anonyme');
-        // $anonUser->setPassword($this->userPasswordHasher->hashPassword($anonUser, "password"));
-        // $anonUser->setRoles(['ROLE_USER']);
-
-        // $manager->persist($anonUser);
-
-        // create tasks without user
-        for ($i = 0; $i < 6; $i++) {
-            $task = new Task();
-            $task->setContent($faker->text(180));
-            $task->setCreatedAt($faker->dateTimeThisYear());
-            $task->setTitle($faker->word() . $i);
-            $task->setIsDone(false);
-
-            $manager->persist($task);
-        }
-
         // create tasks with a user
-        for ($i = 0; $i < 12; $i++) {
+        for ($i = 0; $i < 8; $i++) {
             $task = new Task();
             $task->setContent($faker->text(180));
             $task->setCreatedAt($faker->dateTimeThisYear());
             $task->setTitle($faker->word() . $i);
             $task->setIsDone(false);
-            $task->setUser($usersList[array_rand($usersList, 1)]);
+            $task->setUser($usersList[$i]);
 
             $manager->persist($task);
+
+            $task2 = new Task();
+            $task2->setContent($faker->text(180));
+            $task2->setCreatedAt($faker->dateTimeThisYear());
+            $task2->setTitle($faker->word() . $i);
+            $task2->setIsDone(false);
+            $task2->setUser($usersList[$i]);
+
+            $manager->persist($task2);
         }
+
+        $Anonyme = new User();
+        $Anonyme->setEmail($faker->email());
+        $Anonyme->setUsername('anonyme');
+        $Anonyme->setPassword($this->userPasswordHasher->hashPassword($normalUser, "password"));
+        $Anonyme->setRoles(['ROLE_USER']);
+
+        $manager->persist($Anonyme);
+
+        $taskAnon = new Task();
+        $taskAnon->setContent($faker->text(180));
+        $taskAnon->setCreatedAt($faker->dateTimeThisYear());
+        $taskAnon->setTitle($faker->word() . $i);
+        $taskAnon->setIsDone(false);
+        $taskAnon->setUser($Anonyme);
+
+        $manager->persist($taskAnon);
 
         $manager->flush();
     }

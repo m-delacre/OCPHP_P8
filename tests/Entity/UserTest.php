@@ -58,7 +58,7 @@ class UserTest extends KernelTestCase
     {
         $user = $this->userRepository->findOneByUsername('admin1');
 
-        $this->assertCount(4, $user->getTasks());
+        $this->assertCount(2, $user->getTasks());
 
         $taskToBeRemoved = $this->taskRepository->findOneByUser($user);
 
@@ -68,14 +68,14 @@ class UserTest extends KernelTestCase
 
         $this->assertEmpty($ShouldNotExistAnymore);
 
-        $this->assertCount(3, $user->getTasks());
+        $this->assertCount(1, $user->getTasks());
     }
 
     public function testAddTask(): void
     {
         $user = $this->userRepository->findOneByUsername('admin1');
 
-        $this->assertCount(4, $user->getTasks());
+        $this->assertCount(2, $user->getTasks());
 
         $newTask = new Task();
         $newTask
@@ -86,6 +86,6 @@ class UserTest extends KernelTestCase
 
         $user->addTask($newTask);
 
-        $this->assertCount(5, $user->getTasks());
+        $this->assertCount(3, $user->getTasks());
     }
 }

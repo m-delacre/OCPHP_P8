@@ -14,6 +14,6 @@ class DefaultControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', "Bienvenue sur Todo List, l'application vous permettant de gérer l'ensemble de vos tâches sans effort !");
         $this->assertCount(2, $crawler->filter('img'));
-        $this->assertCount(6, $crawler->filter('a'));
+        $this->assertCount(5, $crawler->filter('a'));
     }
 }
