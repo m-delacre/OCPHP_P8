@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class TaskController extends AbstractController
 {
+    #[IsGranted('ROLE_USER')]
     #[Route('/tasks', name: 'task_list')]
     public function listTask(TaskRepository $taskRepository): Response
     {
@@ -24,6 +25,7 @@ class TaskController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/tasksDone', name: 'task_list_done')]
     public function listTaskNotDone(TaskRepository $taskRepository): Response
     {
@@ -33,6 +35,7 @@ class TaskController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/tasks/create', name: 'task_create')]
     public function createTask(Request $request, EntityManagerInterface $em): Response
     {
