@@ -1,6 +1,6 @@
 # OCPHP_P8
 
-*Ce projet fait partie de mon parcours de formation, l'objectif de ce projet est de créer une API qui utilise les token JWT pour l'authentification.* 
+*Ce projet fait partie de mon parcours de formation.* 
 
 ### Prérequis :
 
